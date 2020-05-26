@@ -1,0 +1,39 @@
+Good Team
+11
+1 3 5 2 4 11 9 8 10 7 6
+2
+2
+2
+Sally Klaffs
+Philippines
+0.72
+Corey Wanling
+United States
+0.68
+Colas Cooksley
+Japan
+0.02
+Kattie Falloon
+Ukraine
+0.49
+Lew Melanaphy
+Portugal
+0.56
+Iona Shelsher
+Uruguay
+0.61
+Bunni Sidebottom
+Russia
+0.3
+Rivalee Kellington
+Vietnam
+0.42
+Ced Brodeau
+Germany
+0.39
+Sydelle Piotrowski
+Indonesia
+0.42
+Percival Bravery
+Vietnam
+0.2

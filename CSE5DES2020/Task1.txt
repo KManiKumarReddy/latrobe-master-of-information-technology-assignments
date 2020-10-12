@@ -1,0 +1,171 @@
+1. Add a new product.
+
+input:
+		id?:String
+		description?:String
+output:
+		None
+pre conditions:
+		// id? is new
+		not exists p in productList | p.id=id?
+post conditions:
+		// add new product
+		let p= new Product(id?,description?)
+			p.id=id?
+			p.description=description?
+		add p to productList
+
+2. Add a new customer with one delivery address.
+
+input:
+		id?:String
+		name?:String
+		addressid?:String
+		line1?:String
+		line2?:String
+		contactperson?:String
+		contactphone?:String
+output:
+		None
+pre conditions:
+		// id? is new
+		not exists c in customerList | c.id=id?
+		// addressid? is new
+		not exists a in addressList | a.id=id?
+post conditions:
+		//add new address
+		let a= new address(addressid?,line1?,line2?,contactperson?,contactphone?)
+			a.id=id?
+			a.line1=line1?
+			a.line2=line2?
+			a.contactperson=contactperson?
+			a.contactphone=contactphone?
+		add :a to addressList
+		// add new customer
+		let c= new Customer(id?,name?)
+			c.id=id?
+			c.name=name?
+		// add address to customer
+		add :a to c.addresses
+
+3. Add a delivery address to an existing customer.
+
+input:
+		id?:String
+		line1?:String
+		line2?:String
+		contactperson?:String
+		contactphone?:String
+		cid?:String
+output:
+		None
+pre conditions:
+		//cid? exists 
+		exists c in customerList | c.id=cid?
+		//id? is new
+		not exists a in addressList | a.id=id?
+post conditions:
+		// add new address
+		let a= new address(id?,line1?,line2?,contactperson?,contactphone?)
+			a.id=id?
+			a.line1=line1?
+			a.line2=line2?
+			a.contactperson=contactperson?
+			a.contactphone=contactphone?
+		add a to addressList
+		// retreive customer
+		let :customer =  element in customerList | :customer.id = cid?
+		add a to :customer.addresses
+
+
+4. Add a standing order to an existing customer.
+
+input:
+		id?:String
+		customerid?:String
+		addressid?:String
+		productid?:String
+		price?:Real
+		quantities?:List<Integer>*
+		startdate?:Integer
+		enddate?:Integer
+output:
+		None
+pre conditions:
+		//customerid? exists 
+		exists c in customerList | c.id=customerid?
+		//productid? exists 
+		exists p in productList | p.id=productid?
+		//addressid? exists
+		exists a in addressList | p.id=addressid?
+		// retreive customer
+		let customer = element in customerList | :customer.id = customerid?
+		//addressid? belongs to customer
+		exists a in :customer.addresses | a.id=addressid?
+		//id? is new
+		not exists o in orderList | o.id=id?
+post conditions:
+		// retreive product
+		let product = element in productList | :product.id = productid?
+		// retreive address
+		let address = element in addressList | :address.id = addressid?
+		let status = OrderStatus.active
+		// add new order
+		let a= new order(id?,:customer,:address,:product,price?,quantities?,startdate?,enddate?,:status)
+			o.id=id?
+			o.customer=customer?
+			o.address=address?
+			o.product=product?
+			o.price=price?
+			o.quantities=new set<quantities>()
+			o.startdate=startdate?
+			o.enddate=enddate?
+			o.status=:status
+		add o to orderList
+
+5. List standing orders that need to be filled for a particular date, sorted by customer name and,
+within a name, by the customer id
+
+input:
+		date?:Integer
+output:
+		sortedStandingOrdersList:List<Order>
+pre conditions:
+		None
+post conditions:
+		// retreive orders
+		Let standingOrdersList = elements in orderList | :order.startdate < date? and :order.enddate > date? and :order.status = OrderStatus.active
+		// sort orders
+		Let sortedStandingOrdersList = sort elements in standingOrdersList | :standingOrdersList.customer.name < :standingOrdersList.customer.name, :standingOrdersList.customer.id < :standingOrdersList.customer.id
+
+6. Add a delivery.
+
+input:
+		id?:String
+		customer?:Customer
+		address?:Address
+		date?:Integer
+		deliveryItems?:List<DeliveryItem>*
+output:
+		None
+pre conditions:
+		//id? is new
+		not exists d in deliveryList | d.id=id?
+		//id? exists 
+		exists c in customerList | c.id=id?
+		//id? is
+		exists a in addressList | a.id=id?
+post conditions:
+		let d=new delivery(id?,customer?,address?,date?,dayOfWeek?,deliveryItems?)
+		//add new delivery
+			d.id=id?
+		// add customer to delivery
+		set d.customer=customer?
+		//add address to delivery
+		let d = element in deliveryList | d.address=address?
+		set d.address=address?
+			d.date=date?
+			d.dayOfWeek= date? % 7
+		//add deliveryItems to deliveryList
+		let d = element in deliveryList | d.deliveryItems=deliveryItems?
+		set d.deliveryItems=deliveryItems?	

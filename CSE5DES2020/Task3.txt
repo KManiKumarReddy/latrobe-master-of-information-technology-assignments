@@ -1,0 +1,2 @@
+a. The set of six use Use cases are definetely adequate for this purpose as all the use cases can be successfully implemented, but for the adequate use of complete system i.e. to use Invoices we need to implement other use cases
+b. 7,11,12,13,14 needed to be included to effectively generate Invoices and use the Invoice class.
